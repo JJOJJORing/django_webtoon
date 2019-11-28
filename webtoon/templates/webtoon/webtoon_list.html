@@ -1,0 +1,90 @@
+{% extends 'Base.html' %}
+{% block title %}웹툰 리스트{% endblock %}
+
+{% block content %}
+{% if webtoon_list %}
+<table class="table table-dark">
+    <thead>
+    <th scope="col">#</th>
+    <th scope="col">이미지</th>
+    <th class="text-center" scope="col">제목</th>
+    <th class="text-center" scope="col">작가</th>
+    <th class="text-center" scope="col">업데이트</th>
+    <th class="text-center" scope="col">상태</th>
+    <th class="text-center" scope="col">요일</th>
+
+    </thead>
+    <tbody>
+    {% for webtoon in object_list %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="/detail/{{ webtoon.webtoon_id }}"><img src="{{ webtoon.webtoon_img_url }}"></a></td>
+        <td class="text-center">{{ webtoon.webtoon_name }}</td>
+        <td class="text-center">{{ webtoon.webtoon_author }}</td>
+        {% if webtoon.webtoon_update == 1 %}
+            <td class="text-center">업데이트</td>
+        {% else %}
+            <td class="text-center"></td>
+        {% endif %}
+        {% if webtoon.webtoon_status == 1 %}
+            <td class="text-center">휴재</td>
+        {% elif webtoon.webtoon_status == 2 %}
+            <td class="text-center"></td>
+        {% else %}
+            <td class="text-center"></td>
+        {% endif %}
+
+        {% if webtoon.webtoon_mon == 1 %}
+            <td class="text-center">월요일</td>
+        {% elif webtoon.webtoon_tue == 1 %}
+            <td class="text-center">화요일</td>
+        {% elif webtoon.webtoon_wed == 1 %}
+            <td class="text-center">수요일</td>
+        {% elif webtoon.webtoon_thu == 1 %}
+            <td class="text-center">목요일</td>
+        {% elif webtoon.webtoon_fri == 1 %}
+            <td class="text-center">금요일</td>
+        {% elif webtoon.webtoon_sat == 1 %}
+            <td class="text-center">토요일</td>
+        {% elif webtoon.webtoon_sun == 1 %}
+            <td class="text-center">일요일</td>
+        {% else %}
+            <td class="text-center"></td>
+
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<ul class="pagination justify-content-center pagination-sm">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="{% url 'list' %}?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1">Previous</a>
+    </li>
+    {% endif %}
+    {% for object in page_obj.paginator.page_range %}
+    <li class="page-item {% if page_obj.number == forloop.counter %}disabled{% endif %}">
+        <a class="page-link" href="{{ request.path }}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+    </li>
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="{% url 'list' %}?page={{ page_obj.next_page_number }}">Next</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+        <a class="page-link" href="#">Next</a>
+    </li>
+    {% endif %}
+</ul>
+{% endif %}
+{% else %}
+    <p>검색 결과가 없습니다</p>
+{% endif %}
+{% endblock %}
